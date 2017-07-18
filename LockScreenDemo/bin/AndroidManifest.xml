@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.lockscreendemo"
+    package="com.xian.locktime"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.lockscreendemo.LockActivity"
+            android:name="com.xian.locktime.LockActivity"
             android:label="@string/app_name"
            android:theme="@style/Theme.AppTheme" >
             <intent-filter>
@@ -26,9 +26,16 @@
             </intent-filter>
         </activity>
         
-        <service android:name="com.example.lockscreendemo.RegisterService"></service>
-        
-        <!-- <receiver android:name=".MyDeviceAdminReceiver"> -->
+        <service android:name="com.xian.locktime.ScreenStateListenerService"></service>
+
+    <receiver android:name="com.xian.locktime.SceenCloseDeviceAdminReceiver">
+    <meta-data
+        android:name="android.app.device_admin"
+        android:resource="@xml/my_admin" />
+	    <intent-filter>
+	       <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+	    </intent-filter>
+	</receiver>
     <meta-data
         android:name="android.app.device_admin"
         android:resource="@xml/my_admin" />
@@ -36,7 +43,7 @@
 	       <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
 	    </intent-filter>
         <receiver
-        android:name="com.example.lockscreendemo.AutoStartBroadcastReceiver">  
+        android:name="com.xian.locktime.BootAutoStratBroadcastReceiver">  
         <intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED" />
         </intent-filter>
