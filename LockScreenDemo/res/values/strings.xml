@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">LockScreen2Xian</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="font_file_path_486">fonts/486.ttf</string>
+    <string name="font_file_path_digit">fonts/digit.ttf</string>
+    <string name="font_file_path_digigraphics">fonts/digigraphics.ttf</string>
 </resources>

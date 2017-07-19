@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LockScreenCtrol">
+        <attr name="fontSize2Date" format="dimension" />
+        <attr name="fontSize2Time" format="dimension" />
+        <attr name="fontColor2Date" format="color" />
+        <attr name="fontColor2Time" format="color" />
+        <attr name="backgroundColor2Custom" format="color" />
+        <attr name="fontFilePath" format="string" />
+    </declare-styleable>
+</resources>
