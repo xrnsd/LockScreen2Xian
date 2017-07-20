@@ -3,7 +3,13 @@
     <string name="app_name">LockScreen2Xian</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+
+    <string name="font_file_path_lcd">fonts/lcd.ttf</string>
     <string name="font_file_path_486">fonts/486.ttf</string>
     <string name="font_file_path_digit">fonts/digit.ttf</string>
+    <string name="font_file_path_technolines">fonts/technolines.ttf</string>
     <string name="font_file_path_digigraphics">fonts/digigraphics.ttf</string>
+    <string name="font_file_path_valerie_medium">fonts/valerie_medium.ttf</string>
+    <string name="font_file_path_djb_friday_night_light">fonts/djb_friday_night_light.ttf</string>
+    <string name="font_file_path_granite_modern_regular">fonts/granite_modern_regular.ttf</string>
 </resources>

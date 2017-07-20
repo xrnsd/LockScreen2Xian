@@ -14,28 +14,39 @@
         <item name="fontFilePath">fonts/digigraphics.ttf</item>
     </style>
     <!-- UI ctronls -->
-    <style name="font_style_486_port">
-        <item name="fontFilePath">@string/font_file_path_486</item>
-        <item name="fontSize2Date">20dp</item>
-        <item name="fontSize2Time">35dp</item>
+    <style name="font_style_base">
         <item name="fontColor2Date">#FFFFFF</item>
         <item name="fontColor2Time">#FFFFFF</item>
         <item name="backgroundColor2Custom">#000000</item>
     </style>
-    <style name="font_style_digit_port">
-        <item name="fontFilePath">@string/font_file_path_digit</item>
-        <item name="fontSize2Date">20dp</item>
-        <item name="fontSize2Time">40dp</item>
-        <item name="fontColor2Date">#FFFFFF</item>
-        <item name="fontColor2Time">#FFFFFF</item>
-        <item name="backgroundColor2Custom">#000000</item>
+
+    <style name="font_style_lcd" parent="@style/font_style_base">
+        <item name="fontFilePath">@string/font_file_path_lcd</item>
+        <item name="fontSize2Date">26dp</item>
+        <item name="fontSize2Time">56dp</item>
     </style>
-    <style name="font_style_digigraphics_port">
+
+    <style name="font_style_valerie_medium" parent="@style/font_style_base">
+        <item name="fontFilePath">@string/font_file_path_valerie_medium</item>
+        <item name="fontSize2Date">30dp</item>
+        <item name="fontSize2Time">60dp</item>
+    </style>
+
+    <style name="font_style_digigraphics_port" parent="@style/font_style_base">
         <item name="fontFilePath">@string/font_file_path_digigraphics</item>
         <item name="fontSize2Date">15dp</item>
         <item name="fontSize2Time">30dp</item>
-        <item name="fontColor2Date">#FFFFFF</item>
-        <item name="fontColor2Time">#FFFFFF</item>
-        <item name="backgroundColor2Custom">#000000</item>
+    </style>
+
+    <style name="font_style_djb_friday_night_light" parent="@style/font_style_base">
+        <item name="fontFilePath">@string/font_file_path_djb_friday_night_light</item>
+        <item name="fontSize2Date">15dp</item>
+        <item name="fontSize2Time">36dp</item>
+    </style>
+
+    <style name="font_style_granite_modern_regular" parent="@style/font_style_base">
+        <item name="fontFilePath">@string/font_file_path_granite_modern_regular</item>
+        <item name="fontSize2Date">20dp</item>
+        <item name="fontSize2Time">40dp</item>
     </style>
 </resources>
