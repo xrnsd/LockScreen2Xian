@@ -2,8 +2,11 @@ package com.xian.locktime;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.admin.DevicePolicyManager;
@@ -18,15 +21,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.UserHandle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class LockActivity extends Activity {
     public static final String PROJECT_NAME="LockScreen2Xian";
     private static final String TAG = "LockActivity";
+    private static final  int MSG_VAL_CLOSE_SCREEN=10;
+    private static final  int MSG_VAL_CLOSE_MYSELF=20;
     private static final int TIME_LONG = 6000;
     private static int sStyleIdIndex = -1;
 
@@ -46,6 +52,8 @@ public class LockActivity extends Activity {
 
     private DevicePolicyManager policyManager;
     private ComponentName componentName;
+    private Handler mHandler;
+    private UnderView mUnderView;
     private TextView tvTime=null,tvDate=null;
     private  SimpleDateFormat mFormatDate=new SimpleDateFormat("yyyy-MM-dd"),
             mFormatTime=new SimpleDateFormat("HH mm");
@@ -53,10 +61,14 @@ public class LockActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_IGNORE_CHEEK_PRESSES);
-
+//        this.getWindow().addFlags(
+//                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+//                | WindowManager.LayoutParams.FLAG_IGNORE_CHEEK_PRESSES);
+        
+      this.getWindow().addFlags(
+      WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+      | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+      
         initUiState(getApplicationContext());
 
         setContentView(R.layout.activity_main);
@@ -93,6 +105,16 @@ public class LockActivity extends Activity {
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mUnderView.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void onBackPressed() {
+    }
+
+    @Override
     public void finish() {
         Utils.d(TAG, "finish");
         super.finish();
@@ -111,7 +133,8 @@ public class LockActivity extends Activity {
     private void initTextTime(Context context,int style_id){
         if(tvTime==null||tvDate==null){
             tvDate= (TextView) findViewById(R.id.tv_date);
-            tvTime= (TextView) findViewById(R.id.tv_time);  
+            tvTime= (TextView) findViewById(R.id.tv_time);
+            mUnderView=new UnderView(context);
          }
         if(tvTime==null||tvDate==null){
             Utils.e(TAG," initTextTime fail textview is null" );
@@ -124,7 +147,7 @@ public class LockActivity extends Activity {
     }
 
     private void updateTime(){
-        if(tvTime==null||tvDate==null){ 
+        if(tvTime==null||tvDate==null){
             Utils.e(TAG," updateTime fail textview is null" );
             return;
          }
@@ -142,16 +165,30 @@ public class LockActivity extends Activity {
             return;
         }
         Utils.d(TAG, "showLockScreen");
-        final  int MSG_VAL_CLOSE_SCREEN=10;
-        final Handler handler=new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == MSG_VAL_CLOSE_SCREEN){
-                    Utils.d(TAG, "handleMessage closeLockScreen");
-                    closeLockScreen();
+        if(mHandler==null){
+            mHandler=new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what) {
+                    case MSG_VAL_CLOSE_SCREEN:
+                        Utils.d(TAG, "handleMessage closeLockScreen");
+                        closeLockScreen();
+                        break;
+                    case MSG_VAL_CLOSE_MYSELF:
+                        Utils.d(TAG, "handleMessage close "+TAG);
+                        Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
+                        homeIntent.addCategory(Intent.CATEGORY_HOME);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                        startActivity(homeIntent);
+                        break;
+                    default:
+                        break;
+                    }
                 }
-            }
-        };
+            };
+            mUnderView.init(findViewById(R.id.move), mHandler,MSG_VAL_CLOSE_MYSELF);
+        }
         
          new Thread(new Runnable(){
                public void run(){
@@ -168,7 +205,7 @@ public class LockActivity extends Activity {
                        e.printStackTrace();
                        Utils.e(TAG, "Runnable : delay close fail ="+e);
                   }
-                 handler.sendEmptyMessage(MSG_VAL_CLOSE_SCREEN);
+                 mHandler.sendEmptyMessage(MSG_VAL_CLOSE_SCREEN);
                  Utils.d(TAG, "Runnable : sendEmptyMessage MSG_VAL_CLOSE_SCREEN ="+MSG_VAL_CLOSE_SCREEN);
                  }    
            }).start();
@@ -190,7 +227,7 @@ public class LockActivity extends Activity {
 
     private boolean isLockScreen(){
         KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE); 
-        return mKeyguardManager.inKeyguardRestrictedInputMode();
+        return true;//mKeyguardManager.inKeyguardRestrictedInputMode();
     }
 
     private void goSetActivity(){
@@ -272,6 +309,190 @@ public class LockActivity extends Activity {
         }
     }
 
+    /*
+         public class UnderView extends View{
+        private static final String TAG = "UnderView";
+        private View mMoveView;
+        private Handler mainHandler;
+        int mMsgValue;
+
+        int mHeight;
+        float mStartY;
+
+        public UnderView(Context context) {
+            super(context);
+            mHeight=((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
+                    .getDefaultDisplay().getHeight();
+        }
+
+        public void init(View move_view,Handler main_handler,int mag_val){
+            if(move_view==null
+                ||main_handler==null){
+                Utils.e(TAG, "init fail");
+            }
+            mMoveView=move_view;
+            mainHandler=main_handler;
+            mMsgValue=mag_val;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            final int action = event.getAction();
+            final float nx = event.getY();
+            switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mStartY = nx;
+                onAnimationEnd();
+            case MotionEvent.ACTION_MOVE:
+                handleMoveView(nx);
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                doTriggerEvent(nx);
+                break;
+            }
+            return true;
+        }
+        
+        private void handleMoveView(float y) {
+            float movey = y - mStartY;
+            if (movey < 0)
+                movey = 0;
+            mMoveView.setTranslationY(movey);
+
+            float mHeightFloat = (float) mHeight;//屏幕显示宽度
+            if(getBackground()!=null){
+                getBackground().setAlpha((int) ((mHeightFloat - mMoveView.getTranslationY()) / mHeightFloat * 200));//初始透明度的值为200
+            }
+        }
+
+        private void doTriggerEvent(float y) {
+            float movey = y - mStartY;
+            if (movey > (mHeight * 0.4)) {
+                moveMoveView(mHeight-mMoveView.getTop(),true);//自动移动到屏幕右边界之外，并finish掉
+
+            } else {
+                moveMoveView(-mMoveView.getTop(),false);//自动移动回初始位置，重新覆盖
+            }
+        }
+        private void moveMoveView(float to,boolean exit){
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mMoveView, "translationX", to);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    if(getBackground()!=null){
+                        getBackground().setAlpha((int) (((float) mHeight - mMoveView.getTranslationY()) / (float) mHeight * 200));
+                    }
+                }
+            });//随移动动画更新背景透明度
+            animator.setDuration(250).start();
+
+            if(exit){
+                animator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if(mainHandler!=null)
+                            mainHandler.obtainMessage(mMsgValue).sendToTarget();
+                        super.onAnimationEnd(animation);
+                    }
+                });
+            }//监听动画结束，利用Handler通知Activity退出
+        }
+        
+    }
+     * */
+    
+    public class UnderView extends View{
+        private static final String TAG = "UnderView";
+        private View mMoveView;
+        private Handler mainHandler;
+        int mMsgValue;
+        
+        int mWidth;
+        float mStartX;
+        
+        public UnderView(Context context) {
+            super(context);
+            mWidth=((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
+                    .getDefaultDisplay().getWidth();
+        }
+        
+        public void init(View move_view,Handler main_handler,int mag_val){
+            if(move_view==null
+                ||main_handler==null){
+                Utils.e(TAG, "init fail");
+            }
+            mMoveView=move_view;
+            mainHandler=main_handler;
+            mMsgValue=mag_val;
+        }
+        
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            final int action = event.getAction();
+            final float nx = event.getX();
+            switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mStartX = nx;
+                onAnimationEnd();
+            case MotionEvent.ACTION_MOVE:
+                handleMoveView(nx);
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                doTriggerEvent(nx);
+                break;
+            }
+            return true;
+        }
+        
+        private void handleMoveView(float x) {
+            float movex = x - mStartX;
+            if (movex < 0)
+                movex = 0;
+            mMoveView.setTranslationX(movex);
+
+            float mWidthFloat = (float) mWidth;//屏幕显示宽度
+            if(getBackground()!=null){
+                getBackground().setAlpha((int) ((mWidthFloat - mMoveView.getTranslationX()) / mWidthFloat * 200));//初始透明度的值为200
+            }
+        }
+        
+        private void doTriggerEvent(float x) {
+            float movex = x - mStartX;
+            if (movex > (mWidth * 0.4)) {
+                moveMoveView(mWidth-mMoveView.getLeft(),true);//自动移动到屏幕右边界之外，并finish掉
+
+            } else {
+                moveMoveView(-mMoveView.getLeft(),false);//自动移动回初始位置，重新覆盖
+            }
+        }
+        private void moveMoveView(float to,boolean exit){
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mMoveView, "translationX", to);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    if(getBackground()!=null){
+                        getBackground().setAlpha((int) (((float) mWidth - mMoveView.getTranslationX()) / (float) mWidth * 200));
+                    }
+                }
+            });//随移动动画更新背景透明度
+            animator.setDuration(250).start();
+
+            if(exit){
+                animator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if(mainHandler!=null)
+                            mainHandler.obtainMessage(mMsgValue).sendToTarget();
+                        super.onAnimationEnd(animation);
+                    }
+                });
+            }//监听动画结束，利用Handler通知Activity退出
+        }
+        
+    }
+    
     /**
      * action:日志工具
      * 
