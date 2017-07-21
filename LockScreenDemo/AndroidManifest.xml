@@ -7,47 +7,61 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
-    
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:supportsRtl="true" >
+        <!-- 
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:taskAffinity="com.xian.locktime.lockscreen"   -->
         <activity
             android:name="com.xian.locktime.LockActivity"
             android:label="@string/app_name"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:screenOrientation="nosensor"
+            android:configChanges="keyboardHidden"
+            android:taskAffinity="com.xian.locktime.lockscreen" 
            android:theme="@style/Theme.AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <service android:name="com.xian.locktime.ScreenStateListenerService"></service>
 
-    <receiver android:name="com.xian.locktime.SceenCloseDeviceAdminReceiver">
-    <meta-data
-        android:name="android.app.device_admin"
-        android:resource="@xml/my_admin" />
-	    <intent-filter>
-	       <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-	    </intent-filter>
-	</receiver>
-    <meta-data
-        android:name="android.app.device_admin"
-        android:resource="@xml/my_admin" />
-	    <intent-filter>
-	       <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-	    </intent-filter>
+        <service 
+            android:name="com.xian.locktime.ScreenStateListenerService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
         <receiver
-        android:name="com.xian.locktime.BootAutoStratBroadcastReceiver">  
-        <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED" />
-        </intent-filter>
-    </receiver>
+            android:name="com.xian.locktime.SceenCloseDeviceAdminReceiver">
+            <meta-data
+                    android:name="android.app.device_admin"
+                    android:resource="@xml/my_admin" />
+            <intent-filter android:priority="1000" >
+                    <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.xian.locktime.BootAutoStratBroadcastReceiver">  
+            <intent-filter android:priority="1000" >
+                    <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

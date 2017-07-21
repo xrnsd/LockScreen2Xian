@@ -21,6 +21,7 @@ public class BootAutoStratBroadcastReceiver extends BroadcastReceiver {
   @Override  
   public void onReceive(Context context, Intent intent) {
       if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+          LockActivity.Utils.d(TAG, "BOOT_COMPLETED");
               Intent service = new Intent(context,ScreenStateListenerService.class);
               context.startService(service);
               LockActivity.Utils.d(TAG, "start  ScreenStateListenerService");

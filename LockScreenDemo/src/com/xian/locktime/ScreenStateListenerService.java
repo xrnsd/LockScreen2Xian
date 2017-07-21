@@ -1,16 +1,17 @@
 package com.xian.locktime;
 
 import android.app.KeyguardManager;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-  
-public class ScreenStateListenerService extends Service {
+import android.service.notification.NotificationListenerService;
+import android.service.notification.StatusBarNotification;
+
+public class ScreenStateListenerService extends NotificationListenerService {
     private static final String TAG = "ScreenStateListenerService";
-    public static final String KEY_BOOT_BY_SERVICE="beActivatedBy";
+    public static final String KEY_BOOT_BY_SERVICE = "boot_by_"+TAG;
     private static boolean isRegistered=false;
     private BroadcastReceiver mBatInfoReceiver;
 
@@ -22,6 +23,7 @@ public class ScreenStateListenerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        LockActivity.Utils.d(TAG, "onCreate");
         initScreenStateReceiver();
     }
 
@@ -29,7 +31,7 @@ public class ScreenStateListenerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         flags = START_STICKY;
         return super.onStartCommand(intent, flags, startId);
-    }  
+    }
 
     @Override
     public void onDestroy() {
@@ -53,12 +55,12 @@ public class ScreenStateListenerService extends Service {
             public void onReceive(final Context context, final Intent intent) {
                 LockActivity.Utils.d(TAG, "mBatInfoReceiver onReceive");
                 String action = intent.getAction();
-                if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                     LockActivity.Utils.d(TAG, "screen state change : "+action);
                     if(isLockScreen(context)){
                         Intent newIntent = context.getPackageManager()
                                 .getLaunchIntentForPackage(getPackageName());
-                        newIntent.putExtra(KEY_BOOT_BY_SERVICE, TAG);
+                        newIntent.putExtra(KEY_BOOT_BY_SERVICE, true);
                         context.startActivity(newIntent);
                         LockActivity.Utils.d(TAG, "start Activity by "+getPackageName());
                     }
@@ -66,10 +68,23 @@ public class ScreenStateListenerService extends Service {
             }
         };
         final IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mBatInfoReceiver, filter);
         isRegistered=true;
         LockActivity.Utils.d(TAG, "registerReceiver");
+    }
+    
+    
+
+    @Override
+    public void onNotificationPosted(StatusBarNotification arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onNotificationRemoved(StatusBarNotification arg0) {
+        // TODO Auto-generated method stub
+        
     }
 }
