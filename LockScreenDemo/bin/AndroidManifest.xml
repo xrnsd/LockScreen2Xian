@@ -38,12 +38,21 @@
             </intent-filter>
         </activity>
 
-        <service 
+        <service
             android:name="com.xian.locktime.ScreenStateListenerService"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:process=":ScreenStateListenerService">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
+        </service>
+        <service 
+            android:name="com.xian.locktime.online.KeepScreenStateListenerService"
+            android:process=":ScreenStateListenerService">
+        </service>
+        <service
+            android:name="com.xian.locktime.online.KeepScreenStateListenerService$InnerService"
+            android:process=":ScreenStateListenerService">
         </service>
 
         <receiver
@@ -57,7 +66,7 @@
         </receiver>
 
         <receiver
-            android:name="com.xian.locktime.BootAutoStratBroadcastReceiver">  
+            android:name="com.xian.locktime.BootAutoStratBroadcastReceiver">
             <intent-filter android:priority="1000" >
                     <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
