@@ -20,17 +20,16 @@
         <!-- 
             android:noHistory="true"
             android:excludeFromRecents="true"
-            android:launchMode="singleInstance"
+            android:screenOrientation="nosensor"
+            android:configChanges="keyboardHidden"
             android:taskAffinity="com.xian.locktime.lockscreen"   -->
         <activity
             android:name="com.xian.locktime.LockActivity"
             android:label="@string/app_name"
             android:noHistory="true"
             android:excludeFromRecents="true"
-            android:launchMode="singleInstance"
             android:screenOrientation="nosensor"
             android:configChanges="keyboardHidden"
-            android:taskAffinity="com.xian.locktime.lockscreen" 
            android:theme="@style/Theme.AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,18 +40,18 @@
         <service
             android:name="com.xian.locktime.ScreenStateListenerService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:process=":ScreenStateListenerService">
+            android:process=":Service">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
         <service 
             android:name="com.xian.locktime.online.KeepScreenStateListenerService"
-            android:process=":ScreenStateListenerService">
+            android:process=":Service">
         </service>
         <service
             android:name="com.xian.locktime.online.KeepScreenStateListenerService$InnerService"
-            android:process=":ScreenStateListenerService">
+            android:process=":Service">
         </service>
 
         <receiver
@@ -67,7 +66,7 @@
 
         <receiver
             android:name="com.xian.locktime.BootAutoStratBroadcastReceiver">
-            <intent-filter android:priority="1000" >
+            <intent-filter>
                     <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>

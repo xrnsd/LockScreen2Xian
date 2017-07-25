@@ -23,25 +23,25 @@
     <style name="font_style_lcd" parent="@style/font_style_base">
         <item name="fontFilePath">@string/font_file_path_lcd</item>
         <item name="fontSize2Date">26dp</item>
-        <item name="fontSize2Time">56dp</item>
+        <item name="fontSize2Time">50dp</item>
     </style>
 
     <style name="font_style_valerie_medium" parent="@style/font_style_base">
         <item name="fontFilePath">@string/font_file_path_valerie_medium</item>
         <item name="fontSize2Date">30dp</item>
-        <item name="fontSize2Time">60dp</item>
+        <item name="fontSize2Time">58dp</item>
     </style>
 
     <style name="font_style_digigraphics_port" parent="@style/font_style_base">
         <item name="fontFilePath">@string/font_file_path_digigraphics</item>
         <item name="fontSize2Date">15dp</item>
-        <item name="fontSize2Time">30dp</item>
+        <item name="fontSize2Time">28dp</item>
     </style>
 
     <style name="font_style_djb_friday_night_light" parent="@style/font_style_base">
         <item name="fontFilePath">@string/font_file_path_djb_friday_night_light</item>
         <item name="fontSize2Date">15dp</item>
-        <item name="fontSize2Time">36dp</item>
+        <item name="fontSize2Time">34dp</item>
     </style>
 
     <style name="font_style_granite_modern_regular" parent="@style/font_style_base">

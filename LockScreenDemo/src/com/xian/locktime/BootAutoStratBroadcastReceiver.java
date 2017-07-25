@@ -27,4 +27,4 @@ public class BootAutoStratBroadcastReceiver extends BroadcastReceiver {
               LockActivity.Utils.d(TAG, "start  ScreenStateListenerService");
       }
   }
-} 
+}

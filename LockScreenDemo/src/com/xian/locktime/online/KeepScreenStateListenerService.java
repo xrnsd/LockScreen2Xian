@@ -8,10 +8,12 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
+import com.xian.locktime.LockActivity;
 import com.xian.locktime.R;
 
 public class KeepScreenStateListenerService extends Service {
     public static final int NOTIFICATION_ID = 0x11;
+    private static final String TAG = "KeepScreenStateListenerService";
 
     public KeepScreenStateListenerService() {
     }
@@ -34,6 +36,7 @@ public class KeepScreenStateListenerService extends Service {
             startForeground(NOTIFICATION_ID, builder.build());
             startService(new Intent(this, InnerService.class));
         }
+        LockActivity.Utils.d(TAG, "onCreate");
     }
 
     public static class InnerService extends Service {

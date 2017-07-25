@@ -17,6 +17,7 @@ public class ScreenStateListenerService extends NotificationListenerService {
 
     @Override  
     public IBinder onBind(Intent intent) {
+        LockActivity.Utils.d(TAG, "onBind");
         return null;
     }
 
@@ -30,6 +31,7 @@ public class ScreenStateListenerService extends NotificationListenerService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         flags = START_STICKY;
+        LockActivity.Utils.d(TAG, "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 

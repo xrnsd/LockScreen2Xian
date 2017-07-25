@@ -41,12 +41,8 @@ public class LockActivity extends Activity {
 
     private  final int[] STYLE_ID_LIST ={
             R.style.font_style_lcd,
-            R.style.font_style_lcd,
-            R.style.font_style_valerie_medium,
             R.style.font_style_valerie_medium,
             R.style.font_style_digigraphics_port,
-            R.style.font_style_digigraphics_port,
-            R.style.font_style_djb_friday_night_light,
             R.style.font_style_djb_friday_night_light,
 //            R.style.font_style_granite_modern_regular,
     };
@@ -54,18 +50,17 @@ public class LockActivity extends Activity {
     private DevicePolicyManager policyManager;
     private ComponentName componentName;
     private Handler mHandler;
-    private Thread mThreadCloseScreen;
     private UnderView mUnderView;
     private TextView tvTime=null,tvDate=null;
-    private  SimpleDateFormat mFormatDate=new SimpleDateFormat("yyyy-MM-dd"),
+    private  SimpleDateFormat mFormatDate=new SimpleDateFormat("MM-dd"),
             mFormatTime=new SimpleDateFormat("HH mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        this.getWindow().addFlags(
-//                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-//                | WindowManager.LayoutParams.FLAG_IGNORE_CHEEK_PRESSES);
+//        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+//                                | WindowManager.LayoutParams.FLAG_IGNORE_CHEEK_PRESSES
+//                                | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         
       this.getWindow().addFlags(
       WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
@@ -191,27 +186,27 @@ public class LockActivity extends Activity {
                     }
                 }
             };
-            mThreadCloseScreen=new Thread(new Runnable(){
-                public void run(){
-                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                    try {
-                        for(int length=time_long;length>0;length-=10){
-                            if(!pm.isScreenOn()){
-                                Utils.d(TAG, "threadCloseScreen : The screen closes ahead of time, cancels the operation");
-                                return;
-                            }
-                             Thread.sleep(10);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        Utils.e(TAG, "Runnable : delay close fail ="+e);
-                   }
-                  mHandler.sendEmptyMessage(MSG_VAL_CLOSE_SCREEN);
-                  Utils.d(TAG, "threadCloseScreen : send message MSG_VAL_CLOSE_SCREEN ="+MSG_VAL_CLOSE_SCREEN);
-                  }    
-            });
         }
-        mThreadCloseScreen.start();
+        new Thread(new Runnable(){
+            public void run(){
+                Utils.e(TAG, "threadCloseScreen : start run ");
+                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                try {
+                    for(int length=time_long;length>0;length-=10){
+                        if(!pm.isScreenOn()){
+                            Utils.d(TAG, "threadCloseScreen : The screen closes ahead of time, cancels the operation");
+                            return;
+                        }
+                         Thread.sleep(10);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Utils.e(TAG, "threadCloseScreen : delay close fail ="+e);
+               }
+              mHandler.sendEmptyMessage(MSG_VAL_CLOSE_SCREEN);
+              Utils.d(TAG, "threadCloseScreen : send message MSG_VAL_CLOSE_SCREEN ="+MSG_VAL_CLOSE_SCREEN);
+              }    
+        }).start();
         mUnderView.init(findViewById(R.id.move), mHandler,MSG_VAL_CLOSE_MYSELF);
     }
 
@@ -220,7 +215,6 @@ public class LockActivity extends Activity {
             return;
         if(mUnderView!=null&&mUnderView.isMoving()){
             Utils.d(TAG, "mUnderView is moving closeLockScreen timing again");
-            mThreadCloseScreen.start();
             return;
         }
         Utils.d(TAG, "closeLockScreen");
@@ -236,7 +230,7 @@ public class LockActivity extends Activity {
 
     private boolean isLockScreen(){
         KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE); 
-        return mKeyguardManager.inKeyguardRestrictedInputMode();
+        return true;//mKeyguardManager.inKeyguardRestrictedInputMode();
     }
 
     private void goSetActivity(){
@@ -495,7 +489,7 @@ public class LockActivity extends Activity {
             }
              * */
             float movey =mStartY-x;
-            if (movey > (mHeight * 0.4)) {
+            if (movey > (mHeight * 0.3)) {
                 moveMoveView(-mHeight,true);//自动移动到屏幕右边界之外，并finish掉
             } else {
                 moveMoveView(-mMoveView.getTop(),false);//自动移动回初始位置，重新覆盖
