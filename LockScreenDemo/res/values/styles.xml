@@ -23,7 +23,7 @@
     <style name="font_style_lcd" parent="@style/font_style_base">
         <item name="fontFilePath">@string/font_file_path_lcd</item>
         <item name="fontSize2Date">26dp</item>
-        <item name="fontSize2Time">60dp</item>
+        <item name="fontSize2Time">55dp</item>
     </style>
 
     <style name="font_style_valerie_medium" parent="@style/font_style_base">

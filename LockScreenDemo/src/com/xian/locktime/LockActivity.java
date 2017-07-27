@@ -149,8 +149,7 @@ public class LockActivity extends Activity {
          policyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
          componentName = new ComponentName(this, SceenCloseDeviceAdminReceiver.class);
          if (!policyManager.isAdminActive(componentName))
-             goSetActivity();
-
+             Utils.goSetActivity(LockActivity.this,componentName);
          Intent service = new Intent(context,ScreenStateListenerService.class);    
          context.startService(service);
     }
@@ -210,22 +209,6 @@ public class LockActivity extends Activity {
             return mKeyguardManager.inKeyguardRestrictedInputMode();
         }
         return true;
-    }
-
-    private void goSetActivity(){
-        Utils.d(TAG, "goSetActivity");
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-        startActivityForResult(intent, 1);
-    }
-
-    private void goHomeActivity(){
-        Utils.d(TAG, "goHomeActivity");
-      Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
-      homeIntent.addCategory(Intent.CATEGORY_HOME);
-      homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-              | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-      startActivity(homeIntent);
     }
     
     /**
@@ -496,7 +479,7 @@ public class LockActivity extends Activity {
     }
     
     /**
-     * action:日志工具
+     * action:工具
      * 
      * project: LockScreenDemo
      * Package: com.xian.locktime
@@ -520,6 +503,22 @@ public class LockActivity extends Activity {
                 tag=PROJECT_NAME+"__"+tag;
                 android.util.Log.d(tag,content);
             }
+        }
+
+        public static void goSetActivity(Activity context,ComponentName componentName){
+            Utils.d(TAG, "goSetActivity");
+            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+            context.startActivityForResult(intent, 1);
+        }
+
+        public static void goHomeActivity(Context context){
+            Utils.d(TAG, "goHomeActivity");
+          Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
+          homeIntent.addCategory(Intent.CATEGORY_HOME);
+          homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                  | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+          context.startActivity(homeIntent);
         }
     }
 }
