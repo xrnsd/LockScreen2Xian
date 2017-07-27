@@ -23,7 +23,7 @@
     <style name="font_style_lcd" parent="@style/font_style_base">
         <item name="fontFilePath">@string/font_file_path_lcd</item>
         <item name="fontSize2Date">26dp</item>
-        <item name="fontSize2Time">50dp</item>
+        <item name="fontSize2Time">60dp</item>
     </style>
 
     <style name="font_style_valerie_medium" parent="@style/font_style_base">
@@ -35,7 +35,7 @@
     <style name="font_style_digigraphics_port" parent="@style/font_style_base">
         <item name="fontFilePath">@string/font_file_path_digigraphics</item>
         <item name="fontSize2Date">15dp</item>
-        <item name="fontSize2Time">28dp</item>
+        <item name="fontSize2Time">35dp</item>
     </style>
 
     <style name="font_style_djb_friday_night_light" parent="@style/font_style_base">
